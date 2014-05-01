@@ -1,0 +1,5 @@
+irmovl	$0,%eax		# sum <- 0 
+irmovl	$1,%ecx		# count <- 1 
+irmovl	$1000,%edx	# limit <- 1000
+addl	%ecx,%eax
+subl	%eax,%edx
