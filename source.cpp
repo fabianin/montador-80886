@@ -182,17 +182,17 @@ private:
 
     static string _subl(string line)
     {
-        return line;
+        return basic2RegisterCommand("61",line);
     }
 
     static string _andl(string line)
     {
-        return line;
+        return basic2RegisterCommand("62",line);
     }
 
     static string _xorl(string line)
     {
-        return line;
+        return basic2RegisterCommand("63",line);
     }
 
     static string _pushl(string line)
@@ -261,11 +261,13 @@ private:
 
 };
 
+//properly sets the private static map
 map<string,string> Parser::registers = Parser::buildRegisterMap();
+
 
 int main()
 {
     Parser parser;
-    cout<<parser.processLine("rrmovl %eax,%ebx");
+    cout<<parser.processLine("addl %eax,%ebx");
     return 0;
 }
