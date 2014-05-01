@@ -21,7 +21,6 @@ map<string,string> buildRegisterMap()
     result["%ebp"]="5";
     result["%esi"]="6";
     result["%edi"]="7";
-    result["null"]="F";
 
     return result;
 }
@@ -98,13 +97,13 @@ public:
 private:
     map<string,ParseRule> commands;
 
+    //replaces ',' with ' ' and anything else we want to do
     string formatLine(string line)
     {
         for(int i = 0 ; i < line.length();i++)
         {
             if(line[i]==',')line[i]=' ';
         }
-        cout<<line;
         return line;
     }
 
@@ -118,63 +117,45 @@ private:
     {
         return "00";
     }
+
     static string _nop(string line)
     {
         return "10";
     }
+
     static string _rrmovl(string line)
     {
-        string result = "20 ";
-        stringstream temp;
-        temp << line;
-        string currentWord;
-
-        //get "rrmovl;"
-        temp>>currentWord;
-
-        //get first register value
-        temp>>currentWord;
-
-        //add register on to result'
-        result += registers[currentWord];
-
-         //get second register value
-        temp>>currentWord;
-
-        //add 2nd register onto result
-        result += registers[currentWord];
-
-        return result;
+        return basic2RegisterCommand("20",line);
     }
 
     static string _cmovle(string line)
     {
-        return line;
+        return basic2RegisterCommand("21",line);
     }
 
     static string _cmovl(string line)
     {
-        return line;
+        return basic2RegisterCommand("22",line);
     }
 
     static string _cmove(string line)
     {
-        return line;
+        return basic2RegisterCommand("23",line);
     }
 
     static string _cmovne(string line)
     {
-        return line;
+        return basic2RegisterCommand("24",line);
     }
 
     static string _cmovge(string line)
     {
-        return line;
+        return basic2RegisterCommand("25",line);
     }
 
     static string _cmovg(string line)
     {
-        return line;
+        return basic2RegisterCommand("26",line);
     }
 
     static string _irmovl(string line)
@@ -194,7 +175,7 @@ private:
 
     static string _addl(string line)
     {
-        return line;
+        return basic2RegisterCommand("60",line);
     }
 
     static string _subl(string line)
@@ -214,14 +195,67 @@ private:
 
     static string _pushl(string line)
     {
-        return line;
+        string result = "A0 ";
+        stringstream temp;
+        string currentWord;
+
+        temp << line;
+
+        //move past "popl"
+        temp>>currentWord;
+
+        //get register
+        temp>>currentWord;
+
+        result += registers[currentWord] + "F";
+
+        return result;
     }
 
     static string _popl(string line)
     {
-        return line;
+        string result = "B0 ";
+        stringstream temp;
+        string currentWord;
+
+        temp << line;
+
+        //move past "popl"
+        temp>>currentWord;
+
+        //get register
+        temp>>currentWord;
+
+        result += registers[currentWord] + "F";
+
+        return result;
     }
 
+    static string basic2RegisterCommand(string opCode, string line)
+    {
+        string result = opCode + " ";
+        stringstream temp;
+        string currentWord;
+
+        temp << line;
+
+        //get "command;"
+        temp>>currentWord;
+
+        //get first register value
+        temp>>currentWord;
+
+        //add register on to result'
+        result += registers[currentWord];
+
+         //get second register value
+        temp>>currentWord;
+
+        //add 2nd register onto result
+        result += registers[currentWord];
+
+        return result;
+    }
 
 };
 
