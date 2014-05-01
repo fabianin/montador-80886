@@ -9,23 +9,7 @@ using namespace std;
 
 typedef string (*ParseRule)(string);
 
-map<string,string> buildRegisterMap()
-{
-    map<string,string> result;
 
-    result["%eax"]="0";
-    result["%ecx"]="1";
-    result["%edx"]="2";
-    result["%ebx"]="3";
-    result["%esp"]="4";
-    result["%ebp"]="5";
-    result["%esi"]="6";
-    result["%edi"]="7";
-
-    return result;
-}
-
-map<string,string> registers=buildRegisterMap();
 
 class Parser
 {
@@ -96,6 +80,24 @@ public:
 
 private:
     map<string,ParseRule> commands;
+
+    static map<string,string> registers;
+
+    static map<string,string> buildRegisterMap()
+    {
+        map<string,string> result;
+
+        result["%eax"]="0";
+        result["%ecx"]="1";
+        result["%edx"]="2";
+        result["%ebx"]="3";
+        result["%esp"]="4";
+        result["%ebp"]="5";
+        result["%esi"]="6";
+        result["%edi"]="7";
+
+        return result;
+    }
 
     //replaces ',' with ' ' and anything else we want to do
     string formatLine(string line)
@@ -258,6 +260,8 @@ private:
     }
 
 };
+
+map<string,string> Parser::registers = Parser::buildRegisterMap();
 
 int main()
 {
