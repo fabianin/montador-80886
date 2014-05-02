@@ -77,6 +77,25 @@ public:
         return commands[command](line);
     }
 
+    //THIS FUNCTION SHOULD TAKE A HEX VALUE AND MAKE IT LITTLE ENDIAN
+    string formatNumber(string number)
+    {
+        string result;
+
+        number=number.substr(2);
+
+        if(number.length()>8) throw exception();
+
+        while(number.length()<8) number = "0"+number;
+
+        for(int i = number.length()-2; i >= 0 ; i-=2)
+        {
+            result+=" ";
+            result+= number[i];
+            result+= number[i+1];
+        }
+        return result.substr(1);
+    }
 
 private:
     map<string,ParseRule> commands;
@@ -109,11 +128,7 @@ private:
         return line;
     }
 
-    //THIS FUNCTION SHOULD TAKE A HEX VALUE AND MAKE IT LITTLE ENDIAN
-    string formatNumber(string number)
-    {
-        return number;
-    }
+
 
     static string _halt(string line)
     {
@@ -268,6 +283,7 @@ map<string,string> Parser::registers = Parser::buildRegisterMap();
 int main()
 {
     Parser parser;
-    cout<<parser.processLine("addl %eax,%ebx");
+    //cout<<parser.processLine("addl %eax,%ebx");
+    cout<<parser.formatNumber("0x12345");
     return 0;
 }
