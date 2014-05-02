@@ -36,66 +36,22 @@ public:
         commands["popl"]=_popl;
     }
 
-    void processFile(string inputFile, string outputFile)
+    void processFile(string inputFile)
     {
         fstream fin(inputFile, ios::in);
-        fstream fout(outputFile, ios::out);
         string line;
         if(!fin)
         {
             throw exception();
         }
-        if(!fout)
+        while(getline(fin,line))
         {
-            throw exception();
-        }
-        while(fin)
-        {
-            getline(fin,line);
-            fout<<processLine(line)<<endl;
+            cout<<processLine(line)<<endl;
         }
         fin.close();
-        fout.close();
     }
 
- string processLine(string line)
-    {
-        line = formatLine(line);
 
-        string result;
-        stringstream input;
-        string command;
-
-        input << line;
-        input>>command;
-
-        if(!commands.count(command))
-        {
-            throw exception();
-        }
-
-        return commands[command](line);
-    }
-
-    //THIS FUNCTION SHOULD TAKE A HEX VALUE AND MAKE IT LITTLE ENDIAN
-    string formatNumber(string number)
-    {
-        string result;
-
-        number=number.substr(2);
-
-        if(number.length()>8) throw exception();
-
-        while(number.length()<8) number = "0"+number;
-
-        for(int i = number.length()-2; i >= 0 ; i-=2)
-        {
-            result+=" ";
-            result+= number[i];
-            result+= number[i+1];
-        }
-        return result.substr(1);
-    }
 
 private:
     map<string,ParseRule> commands;
@@ -127,7 +83,7 @@ private:
         }
         return line;
     }
-	
+
 	static void splitLEAL(string& D, string& rB)
 	{
 		for(int i=0; i < D.length(); i++)
@@ -141,6 +97,45 @@ private:
 		temp >> rB;
 	}
 
+    string processLine(string line)
+    {
+        line = formatLine(line);
+
+        string result;
+        stringstream input;
+        string command;
+
+        input << line;
+        input>>command;
+
+        if(!commands.count(command))
+        {
+            throw exception();
+        }
+
+        return commands[command](line);
+    }
+
+    //THIS FUNCTION SHOULD TAKE A HEX VALUE AND MAKE IT LITTLE ENDIAN
+    static string formatNumber(string number)
+    {
+        string result;
+
+        if(number[0]=='$') number = number.substr(1);
+        if(number.substr(0,2)=="0x") number=number.substr(2);
+
+        if(number.length()>8) throw exception();
+
+        while(number.length()<8) number = "0"+number;
+
+        for(int i = number.length()-2; i >= 0 ; i-=2)
+        {
+            result+=" ";
+            result+= number[i];
+            result+= number[i+1];
+        }
+        return result.substr(1);
+    }
 
     static string _halt(string line)
     {
@@ -193,14 +188,14 @@ private:
 		stringstream temp;
 		string rA;
 		string V;
-		
+
 		temp << line;
 		temp >> V;
 		temp >> V;
 		temp >> rA;
-		
-		result = "30 F" + registers[rA] + formatNumber(V);
-		
+
+		result = "30 F" + registers[rA] +" "+ formatNumber(V);
+
 		return result;
     }
 
@@ -211,16 +206,16 @@ private:
 		string rA;
 		string D;
 		string rB;
-		
+
 		temp << line;
 		temp >> rA;
 		temp >> rA;
 		temp >> D;
-		
+
 		splitLEAL(D, rB);
-		
-		result = "40 " + registers[rA] + registers[rB] + formatNumber(D);
-		
+
+		result = "40 " + registers[rA] + registers[rB] +" "+ formatNumber(D);
+
 		return result;
     }
 
@@ -231,16 +226,16 @@ private:
 		string rA;
 		string D;
 		string rB;
-		
+
 		temp << line;
 		temp >> rA;
 		temp >> rA;
 		temp >> D;
-		
+
 		splitLEAL(D, rB);
-		
-		result = "50 " + registers[rA] + registers[rB] + formatNumber(D);
-		
+
+		result = "50 " + registers[rA] + registers[rB] +" "+ formatNumber(D);
+
 		return result;
     }
 
@@ -337,7 +332,6 @@ map<string,string> Parser::registers = Parser::buildRegisterMap();
 int main()
 {
     Parser parser;
-    //cout<<parser.processLine("addl %eax,%ebx");
-    cout<<parser.formatNumber("0x12345");
+    parser.processFile("testInput.txt");
     return 0;
 }
