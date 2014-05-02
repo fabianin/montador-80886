@@ -127,7 +127,19 @@ private:
         }
         return line;
     }
-
+	
+	static void splitLEAL(string& D, string& rB)
+	{
+		for(int i=0; i < D.length(); i++)
+		{
+			if(D[i] == '(' || D[i] == ')')
+				D[i] = ' ';
+		}
+		stringstream temp;
+		temp << D;
+		temp >> D;
+		temp >> rB;
+	}
 
 
     static string _halt(string line)
@@ -177,17 +189,59 @@ private:
 
     static string _irmovl(string line)
     {
-        return line;
+		string result;
+		stringstream temp;
+		string rA;
+		string V;
+		
+		temp << line;
+		temp >> V;
+		temp >> V;
+		temp >> rA;
+		
+		result = "30 F" + registers[rA] + formatNumber(V);
+		
+		return result;
     }
 
     static string _rmmovl(string line)
     {
-        return line;
+        string result;
+		stringstream temp;
+		string rA;
+		string D;
+		string rB;
+		
+		temp << line;
+		temp >> rA;
+		temp >> rA;
+		temp >> D;
+		
+		splitLEAL(D, rB);
+		
+		result = "40 " + registers[rA] + registers[rB] + formatNumber(D);
+		
+		return result;
     }
 
     static string _mrmovl(string line)
     {
-        return line;
+        string result;
+		stringstream temp;
+		string rA;
+		string D;
+		string rB;
+		
+		temp << line;
+		temp >> rA;
+		temp >> rA;
+		temp >> D;
+		
+		splitLEAL(D, rB);
+		
+		result = "50 " + registers[rA] + registers[rB] + formatNumber(D);
+		
+		return result;
     }
 
     static string _addl(string line)
