@@ -1,3 +1,13 @@
+/******************************************************
+
+*******************Justin Sybrandt*********************
+**********************Mike Boom************************
+
+
+******************************************************/
+
+
+
 #include<fstream>
 #include<iostream>
 #include<map>
@@ -9,13 +19,12 @@ using namespace std;
 
 typedef string (*ParseRule)(string);
 
-
-
 class Parser
 {
 public:
     Parser()
     {
+        //define function pointers for parsing
         commands["halt"]=_halt;
         commands["nop"]=_nop;
         commands["rrmovl"]=_rrmovl;
@@ -36,6 +45,7 @@ public:
         commands["popl"]=_popl;
     }
 
+    //takes a file and sends each line to processLine
     void processFile(char* inputFile)
     {
         ifstream fin;
@@ -52,13 +62,15 @@ public:
         fin.close();
     }
 
-
-
 private:
+
+    //mapping of command words to command parsing functions
     map<string,ParseRule> commands;
 
+    //mapping of register name to register number
     static map<string,string> registers;
 
+    //instantiates register map
     static map<string,string> buildRegisterMap()
     {
         map<string,string> result;
@@ -85,6 +97,7 @@ private:
         return line;
     }
 
+    //helps parse #(Reg)
 	static void splitLEAL(string& D, string& rB)
 	{
 		for(int i=0; i < D.length(); i++)
@@ -98,6 +111,7 @@ private:
 		temp >> rB;
 	}
 
+    //reads a line and sends it to the appropriate parsing function
     string processLine(string line)
     {
         line = formatLine(line);
@@ -117,7 +131,7 @@ private:
         return commands[command](line);
     }
 
-    //THIS FUNCTION SHOULD TAKE A HEX VALUE AND MAKE IT LITTLE ENDIAN
+    //Takes a hex number and formats it for little endian
     static string formatNumber(string number)
     {
         string result;
@@ -138,51 +152,61 @@ private:
         return result.substr(1);
     }
 
+    //parsing function
     static string _halt(string line)
     {
         return "00";
     }
 
+    //parsing function
     static string _nop(string line)
     {
         return "10";
     }
 
+    //parsing function
     static string _rrmovl(string line)
     {
         return basic2RegisterCommand("20",line);
     }
 
+    //parsing function
     static string _cmovle(string line)
     {
         return basic2RegisterCommand("21",line);
     }
 
+    //parsing function
     static string _cmovl(string line)
     {
         return basic2RegisterCommand("22",line);
     }
 
+    //parsing function
     static string _cmove(string line)
     {
         return basic2RegisterCommand("23",line);
     }
 
+    //parsing function
     static string _cmovne(string line)
     {
         return basic2RegisterCommand("24",line);
     }
 
+    //parsing function
     static string _cmovge(string line)
     {
         return basic2RegisterCommand("25",line);
     }
 
+    //parsing function
     static string _cmovg(string line)
     {
         return basic2RegisterCommand("26",line);
     }
 
+    //parsing function
     static string _irmovl(string line)
     {
 		string result;
@@ -191,6 +215,8 @@ private:
 		string V;
 
 		temp << line;
+
+		//read past the command word
 		temp >> V;
 		temp >> V;
 		temp >> rA;
@@ -200,6 +226,7 @@ private:
 		return result;
     }
 
+    //parsing function
     static string _rmmovl(string line)
     {
         string result;
@@ -209,10 +236,13 @@ private:
 		string rB;
 
 		temp << line;
+
+		//read past command word
 		temp >> rA;
 		temp >> rA;
 		temp >> D;
 
+        //extract register and number separatly
 		splitLEAL(D, rB);
 
 		result = "40 " + registers[rA] + registers[rB] +" "+ formatNumber(D);
@@ -220,6 +250,7 @@ private:
 		return result;
     }
 
+    //parsing function
     static string _mrmovl(string line)
     {
         string result;
@@ -229,11 +260,13 @@ private:
 		string rB;
 
 		temp << line;
+
+		//read past command word
 		temp >> D;
 		temp >> D;
 		temp >> rA;
 
-
+        //extract the D and rB
 		splitLEAL(D, rB);
 
 		result = "50 " + registers[rA] + registers[rB] +" "+ formatNumber(D);
@@ -241,26 +274,31 @@ private:
 		return result;
     }
 
+    //parsing function
     static string _addl(string line)
     {
         return basic2RegisterCommand("60",line);
     }
 
+    //parsing function
     static string _subl(string line)
     {
         return basic2RegisterCommand("61",line);
     }
 
+    //parsing function
     static string _andl(string line)
     {
         return basic2RegisterCommand("62",line);
     }
 
+    //parsing function
     static string _xorl(string line)
     {
         return basic2RegisterCommand("63",line);
     }
 
+    //parsing function
     static string _pushl(string line)
     {
         string result = "A0 ";
@@ -280,6 +318,7 @@ private:
         return result;
     }
 
+    //parsing function
     static string _popl(string line)
     {
         string result = "B0 ";
@@ -299,6 +338,7 @@ private:
         return result;
     }
 
+    //This function parses all commands in the form of "Command Reg,Reg"
     static string basic2RegisterCommand(string opCode, string line)
     {
         string result = opCode + " ";
@@ -333,6 +373,7 @@ map<string,string> Parser::registers = Parser::buildRegisterMap();
 
 int main(int argv, char** argc)
 {
+    //if the appropriate number of arguments is provided
     if(argv == 2)
     {
         Parser parser;
