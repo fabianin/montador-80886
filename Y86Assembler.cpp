@@ -1,10 +1,9 @@
-/******************************************************
-
+/*****************************************************\
+******************THE Y86 ASSEMBLER********************
 *******************Justin Sybrandt*********************
 **********************Mike Boom************************
-
-
-******************************************************/
+***********************5/3/2014************************
+\*****************************************************/
 
 
 
@@ -17,6 +16,7 @@
 #include <string>
 using namespace std;
 
+//parse rule function pointer
 typedef string (*ParseRule)(string);
 
 class Parser
@@ -55,14 +55,23 @@ public:
         {
             throw exception();
         }
+
         while(getline(fin,line))
         {
-            cout<<processLine(line)<<endl;
+            if(!isNullOrWhitespace(line))
+                cout<<processLine(line)<<endl;
         }
         fin.close();
     }
 
 private:
+
+    bool isNullOrWhitespace(string x)
+    {
+            for(int i = 0; i<x.length(); i++)
+                if(!isspace(x[i]))return false;
+            return true;
+    }
 
     //mapping of command words to command parsing functions
     map<string,ParseRule> commands;
@@ -127,8 +136,10 @@ private:
         {
             throw exception();
         }
-
-        return commands[command](line);
+        else
+        {
+            return commands[command](line);
+        }
     }
 
     //Takes a hex number and formats it for little endian
