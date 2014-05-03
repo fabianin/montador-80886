@@ -1,5 +1,18 @@
-irmovl	$0x0,%eax
-irmovl	$0x1,%ecx
-irmovl	$0x1000,%edx
-addl	%ecx,%eax
-subl	%eax,%edx
+halt
+nop
+rrmovl %eax,%ebx
+cmovle %eax,%ebx
+cmovl %eax,%ebx
+cmove %eax,%ebx
+cmovne %eax,%ebx
+cmovge %eax,%ebx
+cmovg %eax,%ebx
+irmovl	$0xDEADBEEF,%ecx
+rmmovl %ebx,0x12345678(%esp)
+mrmovl 0x12345(%ebx),%eax
+addl %eax,%ebx
+subl %edi,%esi
+andl %edx,%ebx
+xorl %esp,%ebp
+pushl %ebx
+popl %edx

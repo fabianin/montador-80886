@@ -36,10 +36,11 @@ public:
         commands["popl"]=_popl;
     }
 
-    void processFile(string inputFile)
+    void processFile(char* inputFile)
     {
-        fstream fin(inputFile, ios::in);
+        ifstream fin;
         string line;
+        fin.open(inputFile);
         if(!fin)
         {
             throw exception();
@@ -228,9 +229,10 @@ private:
 		string rB;
 
 		temp << line;
-		temp >> rA;
-		temp >> rA;
 		temp >> D;
+		temp >> D;
+		temp >> rA;
+
 
 		splitLEAL(D, rB);
 
@@ -329,9 +331,12 @@ private:
 map<string,string> Parser::registers = Parser::buildRegisterMap();
 
 
-int main()
+int main(int argv, char** argc)
 {
-    Parser parser;
-    parser.processFile("testInput.txt");
+    if(argv == 2)
+    {
+        Parser parser;
+        parser.processFile(argc[1]);
+    }
     return 0;
 }
