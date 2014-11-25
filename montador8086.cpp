@@ -36,13 +36,13 @@ public:
         commands["popl"]=_popl;
     }
 
-    //takes a file and sends each line to processLine
-    void processFile(char* inputFile)
+    //takes a Arquivo and sends each line to processaLine
+    void processaArquivo(char* arquivoEntrada)
     {
         ifstream fin;
         ofstream out;
         string line;
-        fin.open(inputFile);
+        fin.open(arquivoEntrada);
         out.open("saida");
         if(!fin)
         {
@@ -52,7 +52,7 @@ public:
         while(getline(fin,line))
         {
             if(!isNullOrWhitespace(line))
-                out<<processLine(line)<<endl;
+                out<<processaLine(line)<<endl;
         }
         fin.close();
     }
@@ -112,9 +112,8 @@ private:
 		temp >> D;
 		temp >> rB;
 	}
-
-    //reads a line and sends it to the appropriate parsing function
-    string processLine(string line)
+    //le a linha e manda ela pra função parser apropriada
+    string processaLine(string line)
     {
         line = formatLine(line);
 
@@ -135,7 +134,7 @@ private:
         }
     }
 
-    //Takes a hex number and formats it for little endian
+    //Pega um numero hexa e joga no formato little endian
     static string formatNumber(string number)
     {
         string result;
@@ -381,7 +380,7 @@ int main(int argv, char** argc)
     if(argv == 2)
     {
         Parser parser;
-        parser.processFile(argc[1]);
+        parser.processaArquivo(argc[1]);
     }
     return 0;
 }

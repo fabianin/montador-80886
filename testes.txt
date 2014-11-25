@@ -1,0 +1,18 @@
+halt
+nop
+rrmovl ax,bx
+cmovle ax,bx
+cmovl ax,bx
+cmove ax,bx
+cmovne ax,bx
+cmovge ax,bx
+cmovg ax,bx
+irmovl	$0xDEADBEEF,cx
+rmmovl bx,0x12345678[sp]
+mrmovl 0x12345[bx],ax
+addl ax,bx
+subl di,si
+andl dx,bx
+xorl sp,bp
+pushl bx
+popl dx
